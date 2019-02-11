@@ -1,0 +1,14 @@
+rm -rf build
+cd llvm
+svn up
+cd tools/lldb
+svn up
+cd ../clang
+svn up
+cd ../../..
+bash /home/omair/Dropbox/work/scripts/host-build-gcc.sh
+bash /home/omair/Dropbox/work/scripts/arm32-android.sh
+bash /home/omair/Dropbox/work/scripts/arm-build-gcc.sh
+bash /home/omair/Dropbox/work/scripts/armhf-build-gcc.sh
+bash /home/omair/Dropbox/work/scripts/aarch64-build-gcc.sh
+bash /home/omair/Dropbox/work/scripts/arm64-android.sh
