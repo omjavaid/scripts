@@ -1,15 +1,53 @@
-rm -rf ./build/host
-mkdir -p ./build/host
+#!/bin/bash
+
+if [ $# -gt 0 ]; then
+    echo "Your command line contains $# arguments"
+else
+    echo "Your command line contains no arguments"
+fi
+
+while [ "$1" != "" ]; do
+  case $1 in
+    -f | --fresh )
+      shift
+      rm -rf ./build/host
+      mkdir -p ./build/host
+      ;;
+    -h | --help )
+      usage
+      exit
+      ;;
+    * ) 
+      mkdir -p ./build/host
+  esac
+  shift
+done
+
+if [ ! -d "build/host" ]; then
+  # Control will enter here if $DIRECTORY doesn't exist.
+  exit 1
+fi
+
 cd ./build/host
-BUILD_TYPE=$1
+
 C_COMPILER=clang
 CXX_COMPILER=clang++
-cmake -GNinja -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
--DCMAKE_C_COMPILER=$C_COMPILER -DCMAKE_CXX_COMPILER=$CXX_COMPILER \
--DCMAKE_C_FLAGS="$CFLAGS" -DCMAKE_CXX_FLAGS="$CFLAGS" \
--DLLVM_ENABLE_EH=YES -DLLVM_ENABLE_RTTI=YES -DLLVM_ENABLE_ASSERTIONS=ON \
-"-DLLVM_TARGETS_TO_BUILD=X86;ARM;AArch64" \
+
+TARGET_C_FLAGS=
+TARGET_CXX_FLAGS=
+
+cmake -G Ninja \
+-DCMAKE_BUILD_TYPE=Debug \
+-DLLDB_EXPORT_ALL_SYMBOLS=1 \
+-DLLVM_ENABLE_ASSERTIONS=On \
+-DCMAKE_C_COMPILER=$C_COMPILER \
+-DCMAKE_CXX_COMPILER=$CXX_COMPILER \
+-DLLVM_USE_LINKER=gold \
+-DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+-DCMAKE_CXX_FLAGS="$TARGET_CXX_FLAGS" \
+-DLLVM_LIT_ARGS="-sv --threads=4" \
 ../../llvm
-ninja -v
 
+ninja lldb lldb-server llvm-tblgen clang-tblgen
 
+cd ../..
