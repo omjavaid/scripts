@@ -1,0 +1,57 @@
+// This is test program for generating core dump test file for aarch64-linux.
+// Use following steps to generate a core dump that populates various registers:
+
+// Prerequisite (Linux): Make sure you can generate coredumps on your system.
+// Step 0.1 - set ulimit) ulimit -c unlimited
+// Step 0.2 - Set coredump target dir) sudo sysctl -w kernel.core_pattern=core
+// Step 1 - Build exe) clang -O3 aarch64-neon.c -o linux-aarch64-neon.out
+// Step 2 - Run exec and force a coredump) exec ./linux-aarch64-neon.out
+// mv ./core linux-aarch64-neon.core
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MATRIX_ROWS 32
+#define MATRIX_COLS 32
+
+void matrix_multiply(float *matrix_a, float *matrix_b, float *matrix_r,
+                     unsigned int rows, unsigned int cols) {
+  if (rows != cols)
+    return;
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      matrix_r[cols * i + j] = 0.0;
+      for (int k = 0; k < cols; k++) {
+        matrix_r[cols * i + j] +=
+            matrix_a[cols * i + k] * matrix_b[cols * k + j];
+      }
+    }
+  }
+}
+
+void matrix_print(float *matrix, unsigned int cols, unsigned int rows) {
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      printf("%f ", matrix[j * rows + i]);
+    }
+    printf("\n");
+  }
+  printf("\n");
+}
+
+int main() {
+  float matrix_a[MATRIX_ROWS * MATRIX_COLS];
+  float matrix_b[MATRIX_ROWS * MATRIX_COLS];
+  float matrix_r[MATRIX_ROWS * MATRIX_COLS];
+
+  for (int i = 0; i < (MATRIX_ROWS * MATRIX_COLS); i++) {
+    matrix_a[i] = (float)rand() / (float)(RAND_MAX);
+    matrix_b[i] = (float)rand() / (float)(RAND_MAX);
+    matrix_r[i] = 0.0;
+  }
+
+  matrix_multiply(matrix_a, matrix_b, matrix_r, MATRIX_ROWS, MATRIX_COLS);
+  matrix_print(matrix_r, MATRIX_COLS, MATRIX_ROWS);
+  asm volatile("brk      #0\n\t");
+}
