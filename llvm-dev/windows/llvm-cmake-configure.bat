@@ -56,6 +56,8 @@ cmake -G Ninja ^
 -DCMAKE_TRY_COMPILE_CONFIGURATION=Release ^
 -DLLVM_ENABLE_PROJECTS="clang;llvm;lld;lldb" ^
 -DLLDB_TEST_USER_ARGS="--skip-category=watchpoint" ^
+-DCMAKE_C_COMPILER_LAUNCHER=ccache ^
+-DCMAKE_CXX_COMPILER_LAUNCHER=ccache ^
 -DCLANG_DEFAULT_LINKER=lld ^
 ..\llvm-project\llvm
 
