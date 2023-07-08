@@ -42,7 +42,7 @@ set "LLDB_USE_LLDB_SERVER=1"
 set LIT_OPTS="-svj 4"
 
 IF "%1"=="arm64" (
-    "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsarm64.bat"
+    "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
 ) else IF "%1"=="amd64" (
     "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 ) else (
