@@ -9,17 +9,14 @@ IF "%1" NEQ "amd64" IF "%1" NEQ "arm64" (
 :: set CUSTOM_PYHOME=C:\Users\%USERNAME%\scoop\apps\python\current
 :: set CUSTOM_PYHOME=C:\Users\omair\AppData\Local\Programs\Python\Python311-arm64
 IF "%1" EQU "amd64" (
-    set "DEBUG_DEPS=c:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\ucrt"
+    set ALT_ARCH=x64
 ) else (
-    set "DEBUG_DEPS=c:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\arm64\ucrt"
+    set ALT_ARCH=arm64
 )
 
-IF NOT EXIST "%DEBUG_DEPS%" (
-    echo "Invalid path %DEBUG_DEPS%"
-    EXIT /B 0
-)
+set "DEBUG_DEPS=c:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\ucrt;c:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\%ALT_ARCH%\ucrt"
 
-SET DIA_SDK_DEPS=c:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\bin\%1
+set DIA_SDK_DEPS=c:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\bin\%1
 IF NOT EXIST "%DIA_SDK_DEPS%" (
     echo "Invalid path %DIA_SDK_DEPS%"
     EXIT /B 0
