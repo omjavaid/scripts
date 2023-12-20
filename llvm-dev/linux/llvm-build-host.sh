@@ -34,6 +34,7 @@ fi
 #-DCMAKE_CXX_COMPILER=clang++
 #-DCMAKE_C_COMPILER_LAUNCHER=ccache
 #-DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+#-DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt;flang;lld;llvm;mlir;polly;lldb;bolt"
 
 cmake -G Ninja \
 -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
