@@ -1,22 +1,29 @@
 @echo off
 
-REM Check if %1 is either amd64 or arm64
-IF "%1" NEQ "amd64" IF "%1" NEQ "arm64" (
-    echo Invalid architecture specified. Only amd64 and arm64 are supported.
+:: REM Check if %1 is either amd64 or arm64
+:: IF "%1" NEQ "amd64" IF "%1" NEQ "arm64" (
+::    echo Invalid architecture specified. Only amd64 and arm64 are supported.
+::    EXIT /B 0
+::)
+
+REM Check the architecture and convert to lowercase
+if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    set ARCH=amd64
+    set ALT_ARCH=x64
+) else if "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
+    set ARCH=arm64
+    set ALT_ARCH=arm64
+) else (
+    echo Invalid architecture. Only amd64 and arm64 are supported.
     EXIT /B 0
 )
 
 :: set CUSTOM_PYHOME=C:\Users\%USERNAME%\scoop\apps\python\current
 :: set CUSTOM_PYHOME=C:\Users\omair\AppData\Local\Programs\Python\Python311-arm64
-IF "%1" EQU "amd64" (
-    set ALT_ARCH=x64
-) else (
-    set ALT_ARCH=arm64
-)
 
 set "DEBUG_DEPS=c:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\ucrt;c:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\%ALT_ARCH%\ucrt"
 
-set DIA_SDK_DEPS=c:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\bin\%1
+set DIA_SDK_DEPS=c:\Program Files\Microsoft Visual Studio\2022\Community\DIA SDK\bin\%ARCH%
 IF NOT EXIST "%DIA_SDK_DEPS%" (
     echo "Invalid path %DIA_SDK_DEPS%"
     EXIT /B 0
@@ -38,10 +45,10 @@ set "LLDB_USE_LLDB_SERVER=1"
 
 set LIT_OPTS="-svj 4"
 
-IF "%1"=="arm64" (
+IF "%ARCH%"=="arm64" (
     "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
-) else IF "%1"=="amd64" (
+) else IF "%ARCH%"=="amd64" (
     "c:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 ) else (
-    echo Environment initialization for %1 Failed...
+    echo Environment initialization for %ARCH% Failed...
 )
